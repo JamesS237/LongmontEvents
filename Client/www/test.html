@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head> 
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=7, IE=9, IE=10">
+    <title>Simple Map</title>
+
+    <link rel="stylesheet" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.4/js/esri/css/esri.css">
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0px;
+        padding: 0px;
+        width: 100%;
+      }
+      #map {
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+
+    <script src="http://serverapi.arcgisonline.com/jsapi/arcgis/3.4compact/"></script>
+    <script>
+      dojo.require("esri.map");
+
+      var map;
+
+      function init() {
+        //onorientationchange doesn't always fire in a timely manner in Android so check for both orientationchange and resize
+        var supportsOrientationChange = "onorientationchange" in window, orientationEvent = supportsOrientationChange ? "orientationchange" : "resize";
+
+        window.addEventListener(orientationEvent, function() {
+          orientationChanged();
+        }, false);
+
+        map = new esri.Map("map", {
+          basemap: "streets",
+          center: [2.352, 48.87],
+          zoom: 12
+        });
+
+        dojo.connect(map, "onLoad", function(evt) {
+          map.infoWindow.resize(175, 125);
+          var symbol = new esri.symbol.SimpleMarkerSymbol().setStyle(esri.symbol.SimpleMarkerSymbol.STYLE_X).setSize(12);
+          symbol.outline.setWidth(4).setColor("blue");
+
+          dojo.connect(map, "onClick", function(evt) {
+            var graphic = new esri.Graphic(evt.mapPoint, symbol);
+            map.graphics.add(graphic);
+
+            map.infoWindow.setTitle("<b><i>Title</i></b>");
+            map.infoWindow.setContent("Content goes here. It can be very long. It can be very long. It can be very long. It can be very long. It can be very long. It can be very long. It can be very long. It can be very long.");
+            map.infoWindow.show(evt.screenPoint, map.getInfoWindowAnchor(evt.screenPoint));
+          });
+
+          dojo.connect(map.infoWindow, "onHide", function() {
+            map.graphics.clear();
+          });
+        });
+      }
+
+      function orientationChanged() {
+        console.log("Orientation changed: " + window.orientation);
+        if(map) {
+          map.reposition();
+          map.resize();
+        }
+      }
+
+      dojo.ready(init);
+    </script>
+  </head>
+
+  <body>
+    <div id="map"></div>
+  </body>
+</html>
