@@ -71,7 +71,9 @@
             output2 += '<p>' + data.description + '</p>';
             output2 += '<b>Date</b>: ' + data.date + ' <b>Time</b>: ' + data.time + '<br>';
             output2 += '<b>Location</b>: ' + data.address + '<br>';
-            output2 += '<b>Presented by ' + data.org + '</b><br><br>';
+            if (data.org != 'Unknown') {
+              output2 += '<b>Presented by ' + data.org + '</b><br><br>';
+            }
             output2 += '<b><i id="goingcount">' + data.going_count + ' people are going</i></b>';
             output2 += '<button data-role="button" id="goingbutton" data-icon="star" onclick="updateGoing()">I\'m Going!</button><br>'
             output2 += '<h3>Share:</h3>'
